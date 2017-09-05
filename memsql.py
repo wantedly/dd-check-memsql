@@ -12,10 +12,9 @@ class MemSQL(AgentCheck):
         host, port, user, password = self._get_config(instance)
         with self._connect(host, port, user, password) as db:
             try:
-                db.execute('SELECT 1;')
+                self._submit_leaves(db)
             except Exception as e:
-                self.log.exception("error!")
-                raise e
+                self.log.error("fail to send metrics to datadog")
 
     def _get_config(self, instance):
         self.host = instance.get('host', '')
@@ -37,3 +36,18 @@ class MemSQL(AgentCheck):
         finally:
             if db:
                 db.close()
+
+    def _submit_leaves(self, db):
+        try:
+            res = db.query('SHOW LEAVES;')
+            if res is not None:
+                self.count('memsql.leaves.count', len(res), tags=['leaves'])
+                sum_latency = 0
+                for i in res:
+                    sum_latency += i['Average_Roundtrip_Latency_ms']
+
+                self.gauge('memsql.leaves.avg_roundtrip_latency', sum_latency/len(res), tags=['leaves'])
+
+        except Exception as e:
+            self.log.error("fail to execute _get_leaves")
+            return None
