@@ -46,11 +46,11 @@ class MemSQL(AgentCheck):
                 for i in res:
                     if i['State'] == 'online':
                         online_leaves += 1
-                self.count('memsql.active_leaves', len(res))
+                self.count('memsql.leaves', len(res))
                 self.count('memsql.online_leaves', online_leaves)
 
         except Exception as e:
-            self.log.error("fail to execute _get_leaves")
+            self.log.error("fail to execute _submit_leaves")
             return None
 
     def _submit_aggregators(self, db):
@@ -77,4 +77,26 @@ class MemSQL(AgentCheck):
 
         except Exception as e:
             self.log.error("fail to execute _submit_aggregators")
+            return None
+
+    def _submit_cluster_status(self, db):
+        try:
+            res = db.query('SHOW CLUSTER STATUS;')
+            if res is not None:
+                references = 0
+                partitions = 0
+                online_partitions = 0
+                for i in res:
+                    if i['Role'] == 'Reference':
+                        references += 1
+                    else:
+                        partitions += 1
+                        if i['State'] == 'online':
+                            online_partitions += 1
+                self.count('memsql.references', references)
+                self.count('memsql.partitions', partitions)
+                self.count('memsql.online_partitions', online_partitions)
+
+        except Exception as e:
+            self.log.error("fail to execute _submit_cluster_status")
             return None
