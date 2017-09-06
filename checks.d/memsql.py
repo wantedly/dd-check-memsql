@@ -13,6 +13,7 @@ class MemSQL(AgentCheck):
         with self._connect(host, port, user, password) as db:
             try:
                 self._submit_leaves(db)
+                self._submit_aggregators(db)
             except Exception as e:
                 self.log.error("fail to send metrics to datadog")
 
@@ -50,4 +51,30 @@ class MemSQL(AgentCheck):
 
         except Exception as e:
             self.log.error("fail to execute _get_leaves")
+            return None
+
+    def _submit_aggregators(self, db):
+        try:
+            res = db.query('SHOW AGGREGATORS;')
+            if res is not None:
+                master_aggregators = 0
+                online_master_aggregators = 0
+                child_aggregators = 0
+                online_child_aggregators = 0
+                for i in res:
+                    if int(i['Master_Aggregator']) == 1:
+                        master_aggregators += 1
+                        if i['State'] == 'online':
+                            online_master_aggregators += 1
+                    else:
+                        child_aggregators += 1
+                        if i['State'] == 'online':
+                            online_child_aggregators += 1
+                self.count('memsql.master_aggregators', master_aggregators)
+                self.count('memsql.online_master_aggregators', online_master_aggregators)
+                self.count('memsql.child_aggregators', child_aggregators)
+                self.count('memsql.online_child_aggregators', online_child_aggregators)
+
+        except Exception as e:
+            self.log.error("fail to execute _submit_aggregators")
             return None
