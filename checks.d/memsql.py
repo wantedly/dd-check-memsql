@@ -14,6 +14,7 @@ class MemSQL(AgentCheck):
             try:
                 self._submit_leaves(db)
                 self._submit_aggregators(db)
+                self._submit_cluster_status(db)
             except Exception as e:
                 self.log.error("fail to send metrics to datadog")
 
