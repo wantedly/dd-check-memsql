@@ -47,8 +47,8 @@ class MemSQL(AgentCheck):
                 for i in res:
                     if i['State'] == 'online':
                         online_leaves += 1
-                self.count('memsql.leaves', len(res))
-                self.count('memsql.online_leaves', online_leaves)
+                self.gauge('memsql.leaves', len(res))
+                self.gauge('memsql.online_leaves', online_leaves)
 
         except Exception as e:
             self.log.error("fail to execute _submit_leaves")
@@ -71,10 +71,10 @@ class MemSQL(AgentCheck):
                         child_aggregators += 1
                         if i['State'] == 'online':
                             online_child_aggregators += 1
-                self.count('memsql.master_aggregators', master_aggregators)
-                self.count('memsql.online_master_aggregators', online_master_aggregators)
-                self.count('memsql.child_aggregators', child_aggregators)
-                self.count('memsql.online_child_aggregators', online_child_aggregators)
+                self.gauge('memsql.master_aggregators', master_aggregators)
+                self.gauge('memsql.online_master_aggregators', online_master_aggregators)
+                self.gauge('memsql.child_aggregators', child_aggregators)
+                self.gauge('memsql.online_child_aggregators', online_child_aggregators)
 
         except Exception as e:
             self.log.error("fail to execute _submit_aggregators")
@@ -94,9 +94,9 @@ class MemSQL(AgentCheck):
                         partitions += 1
                         if i['State'] == 'online':
                             online_partitions += 1
-                self.count('memsql.references', references)
-                self.count('memsql.partitions', partitions)
-                self.count('memsql.online_partitions', online_partitions)
+                self.gauge('memsql.references', references)
+                self.gauge('memsql.partitions', partitions)
+                self.gauge('memsql.online_partitions', online_partitions)
 
         except Exception as e:
             self.log.error("fail to execute _submit_cluster_status")
