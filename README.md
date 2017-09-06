@@ -17,7 +17,7 @@ $ sudo cp ./checks.d/memsql.py /etc/dd-agent/checks.d/
 Create a file `memsql.yaml` in the Agent's `conf.d/` folder.
 
 ```
-$ cp ./conf.d/memsql.yaml.example /etc/dd-agent/conf.d/memsql.yaml
+$ sudo cp ./conf.d/memsql.yaml.example /etc/dd-agent/conf.d/memsql.yaml
 ```
 
 ## Development
