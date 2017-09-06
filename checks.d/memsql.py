@@ -41,12 +41,12 @@ class MemSQL(AgentCheck):
         try:
             res = db.query('SHOW LEAVES;')
             if res is not None:
-                self.count('memsql.leaves.count', len(res), tags=['leaves'])
-                sum_latency = 0
+                online_leaves = 0
                 for i in res:
-                    sum_latency += i['Average_Roundtrip_Latency_ms']
-
-                self.gauge('memsql.leaves.avg_roundtrip_latency', sum_latency/len(res), tags=['leaves'])
+                    if i['State'] == 'online':
+                        online_leaves += 1
+                self.count('memsql.active_leaves', len(res))
+                self.count('memsql.online_leaves', online_leaves)
 
         except Exception as e:
             self.log.error("fail to execute _get_leaves")
