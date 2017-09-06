@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -eu
+set -o pipefail
+
+if test ! -f $HOME/.datadog-agent/conf.d/memsql.yaml
+then
+  echo "  + Symlink memsql.yml"
+  ln -s $PWD/memsql.yaml $HOME/.datadog-agent/conf.d/memsql.yaml
+else
+  echo "  + Agent Check config file found."
+fi
+
+if test ! -f $HOME/.datadog-agent/checks.d/memsql.py
+then
+  echo "  + Symlink memsql.py"
+  ln -s $PWD/memsql.py $HOME/.datadog-agent/checks.d/memsql.py
+else
+  echo "  + Agent Check executable file found."
+fi
