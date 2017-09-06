@@ -2,6 +2,6 @@ init_config:
 
 instances:
   - host: localhost
-  - port: 3306
-  - user: user
-  - password: password
+    port: 3306
+    user: user
+    password: password
