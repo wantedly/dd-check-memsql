@@ -31,5 +31,5 @@ $ sudo /opt/datadog-agent/embedded/bin/pip install memsql
 $ ./script/bootstrap
 
 # run dd-check-memsql
-$ datadog-agent-check
+$ datadog-agent check memsql
 ```
